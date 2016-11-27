@@ -19,6 +19,7 @@ import net.battleplugins.msutton.game_project.R;
 public class Player {
 
     Direction dirc;
+    Direction fdirc;
     WeaponType wt;
     Difficulty difficulty;
     private Context context;
@@ -30,6 +31,7 @@ public class Player {
 
     public Player(Context context, Bitmap p, float x, float y) {
         dirc = Direction.EAST;
+        fdirc = Direction.EAST;
         difficulty = Difficulty.Medium;
         this.context = context;
         this.x = x;
@@ -49,6 +51,10 @@ public class Player {
     public Direction getDirection() {
         return this.dirc;
     }
+
+    public Direction setFacingDirection(Direction direction){ return this.fdirc = direction; }
+
+    public Direction getFacingDirection(){ return this.fdirc; }
 
     public Difficulty setDifficulty(Difficulty difficulty) {
         return this.difficulty = difficulty;
@@ -133,10 +139,10 @@ public class Player {
     }
 
     public void shoot(){
-
+        ImageView iv = new ImageView(context);
     }
     public void rPlayer() {
-        Direction direction = getDirection();
+        Direction direction = getFacingDirection();
         boolean wegood;
         ImageView player = null;
         Bitmap playerpic = playerimage;
@@ -152,7 +158,7 @@ public class Player {
             System.out.println("WE NOT GOOD HOMIE");
             wegood = false;
         }
-        if(wegood && GlobalVariable.shooting == false) {
+        if(wegood) {
             switch (direction.getDirectionActual()) {
                 /**
                  * 000 = East

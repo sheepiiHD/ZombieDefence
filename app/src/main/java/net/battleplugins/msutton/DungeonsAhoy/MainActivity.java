@@ -3,21 +3,25 @@ package net.battleplugins.msutton.DungeonsAhoy;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import net.battleplugins.msutton.DungeonsAhoy.GameInfo.Difficulty;
 import net.battleplugins.msutton.DungeonsAhoy.GameInfo.Direction;
+import net.battleplugins.msutton.DungeonsAhoy.GameInfo.ZombieCollection;
 import net.battleplugins.msutton.game_project.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -30,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     Bitmap p;
     JoyStickClass js_move, js_shoot;
 
+    ZombieCollection zombieCollection = new ZombieCollection();
+
     Player player;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +46,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         View v = findViewById(R.id.linearLayout);
 
+
+        View view = findViewById(R.id.linearLayout);
+
+
         v.setBackgroundColor(Color.GRAY);
 
         image_player = (ImageView)findViewById(R.id.player);
-        p = ((BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.player, null)).getBitmap();
-        player = new Player(this, p, image_player.getX(), image_player.getY());
+
+        int x = (int)image_player.getX();
+        int y = (int)image_player.getY();
+
+
+        Point p = new Point(x, y);
+        zombieCollection.spawn(this, view, 1, p);
+
         if(dev_mode){
             enableDeveloperMode();
         }else{
@@ -119,12 +135,12 @@ public class MainActivity extends AppCompatActivity {
 
         js_move = new JoyStickClass(getApplicationContext()
                 , layout_joystick_move, R.drawable.image_button);
-        js_move.setStickSize(150, 150);
-        js_move.setLayoutSize(500, 500);
+        js_move.setStickSize(50, 50);
+        js_move.setLayoutSize(150, 150);
         js_move.setLayoutAlpha(35);
         js_move.setStickAlpha(100);
-        js_move.setOffset(90);
-        js_move.setMinimumDistance(50);
+        js_move.setOffset(20);
+        js_move.setMinimumDistance(20);
 
         /**
          * Shooting Joystick
@@ -132,12 +148,12 @@ public class MainActivity extends AppCompatActivity {
         layout_joystick_shoot = (RelativeLayout)findViewById(R.id.layout_joystick_shooting);
 
         js_shoot = new JoyStickClass(getApplicationContext(), layout_joystick_shoot, R.drawable.image_button);
-        js_shoot.setStickSize(150, 150);
-        js_shoot.setLayoutSize(500, 500);
+        js_shoot.setStickSize(50, 50);
+        js_shoot.setLayoutSize(150, 150);
         js_shoot.setLayoutAlpha(35);
         js_shoot.setStickAlpha(100);
-        js_shoot.setOffset(90);
-        js_shoot.setMinimumDistance(50);
+        js_shoot.setOffset(20);
+        js_shoot.setMinimumDistance(20);
 
     }
 
@@ -146,6 +162,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private void initiateMovementJoystickListener(){
 
+        Bitmap p = ((BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.player, null)).getBitmap();
+        player = new Player(this, p, image_player.getX(), image_player.getY());
 
 
         layout_joystick_move.setOnTouchListener(new View.OnTouchListener() {
@@ -163,19 +181,24 @@ public class MainActivity extends AppCompatActivity {
                     Bitmap p = ((BitmapDrawable)ResourcesCompat.getDrawable(getResources(), R.drawable.player, null)).getBitmap();
 
                     int direction = js_move.get8Direction();
-
                     switch(direction){
                         case JoyStickClass.STICK_UP:
                             textView5.setText("Direction : Up");
                             if(player.getDirection() != Direction.NORTH) {
                                 player.setDirection(Direction.NORTH);
-                                fillDirectionPlayer();
+                                if(GlobalVariable.shooting == false) {
+                                    player.setFacingDirection(Direction.NORTH);
+                                }
                             }
+                            fillDirectionPlayer();
                             break;
                         case JoyStickClass.STICK_UPRIGHT:
                             textView5.setText("Direction : Up Right");
                             if(player.getDirection() != Direction.NORTHEAST) {
                                 player.setDirection(Direction.NORTHEAST);
+                                if(GlobalVariable.shooting == false) {
+                                    player.setFacingDirection(Direction.NORTHEAST);
+                                }
                             }
                             fillDirectionPlayer();
                             break;
@@ -183,6 +206,9 @@ public class MainActivity extends AppCompatActivity {
                             textView5.setText("Direction : Right");
                             if(player.getDirection() != Direction.EAST) {
                                 player.setDirection(Direction.EAST);
+                                if(GlobalVariable.shooting == false) {
+                                    player.setFacingDirection(Direction.EAST);
+                                }
                             }
                             fillDirectionPlayer();
                             break;
@@ -190,6 +216,9 @@ public class MainActivity extends AppCompatActivity {
                             textView5.setText("Direction : Down Right");
                             if(player.getDirection() != Direction.SOUTHEAST) {
                                 player.setDirection(Direction.SOUTHEAST);
+                                if(GlobalVariable.shooting == false) {
+                                    player.setFacingDirection(Direction.SOUTHEAST);
+                                }
                             }
                             fillDirectionPlayer();
                             break;
@@ -197,6 +226,9 @@ public class MainActivity extends AppCompatActivity {
                             textView5.setText("Direction : Down");
                             if(player.getDirection() != Direction.SOUTH) {
                                 player.setDirection(Direction.SOUTH);
+                                if(GlobalVariable.shooting == false) {
+                                    player.setFacingDirection(Direction.SOUTH);
+                                }
                             }
                             fillDirectionPlayer();
 
@@ -205,6 +237,9 @@ public class MainActivity extends AppCompatActivity {
                             textView5.setText("Direction : Down Left");
                             if(player.getDirection() != Direction.SOUTHWEST) {
                                 player.setDirection(Direction.SOUTHWEST);
+                                if(GlobalVariable.shooting == false) {
+                                    player.setFacingDirection(Direction.SOUTHWEST);
+                                }
                             }
                             fillDirectionPlayer();
                             break;
@@ -212,6 +247,9 @@ public class MainActivity extends AppCompatActivity {
                             textView5.setText("Direction : Left");
                             if(player.getDirection() != Direction.WEST) {
                                 player.setDirection(Direction.WEST);
+                                if(GlobalVariable.shooting == false) {
+                                    player.setFacingDirection(Direction.WEST);
+                                }
                             }
                             fillDirectionPlayer();
                             break;
@@ -219,6 +257,9 @@ public class MainActivity extends AppCompatActivity {
                             textView5.setText("Direction : Up Left");
                             if(player.getDirection() != Direction.NORTHWEST) {
                                 player.setDirection(Direction.NORTHWEST);
+                                if(GlobalVariable.shooting == false) {
+                                    player.setFacingDirection(Direction.NORTHWEST);
+                                }
                             }
                             fillDirectionPlayer();
                             break;
@@ -243,8 +284,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     private void initiateShootingJoystickListener(){
-        Bitmap p = ((BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.player, null)).getBitmap();
-
 
         layout_joystick_shoot.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View arg0, MotionEvent arg1) {
@@ -255,56 +294,55 @@ public class MainActivity extends AppCompatActivity {
 
                     GlobalVariable.shooting = true;
 
-                    Bitmap p = ((BitmapDrawable)ResourcesCompat.getDrawable(getResources(), R.drawable.player, null)).getBitmap();
 
-                    int direction = js_move.get8Direction();
+                    int direction = js_shoot.get8Direction();
 
                     switch(direction){
                         case JoyStickClass.STICK_UP:
                             if(player.getDirection() != Direction.NORTH) {
-                                player.setDirection(Direction.NORTH);
+                                player.setFacingDirection(Direction.NORTH);
                             }
                             GlobalVariable.shooting = true;
                             break;
                         case JoyStickClass.STICK_UPRIGHT:
                             if(player.getDirection() != Direction.NORTHEAST) {
-                                player.setDirection(Direction.NORTHEAST);
+                                player.setFacingDirection(Direction.NORTHEAST);
                             }
                             GlobalVariable.shooting = true;
                             break;
                         case JoyStickClass.STICK_RIGHT:
                             if(player.getDirection() != Direction.EAST) {
-                                player.setDirection(Direction.EAST);
+                                player.setFacingDirection(Direction.EAST);
                             }
                             GlobalVariable.shooting = true;
                             break;
                         case JoyStickClass.STICK_DOWNRIGHT:
                             if(player.getDirection() != Direction.SOUTHEAST) {
-                                player.setDirection(Direction.SOUTHEAST);
+                                player.setFacingDirection(Direction.SOUTHEAST);
                             }
                             GlobalVariable.shooting = true;
                             break;
                         case JoyStickClass.STICK_DOWN:
                             if(player.getDirection() != Direction.SOUTH) {
-                                player.setDirection(Direction.SOUTH);
+                                player.setFacingDirection(Direction.SOUTH);
                             }
                             GlobalVariable.shooting = true;
                             break;
                         case JoyStickClass.STICK_DOWNLEFT:
                             if(player.getDirection() != Direction.SOUTHWEST) {
-                                player.setDirection(Direction.SOUTHWEST);
+                                player.setFacingDirection(Direction.SOUTHWEST);
                             }
                             GlobalVariable.shooting = true;
                             break;
                         case JoyStickClass.STICK_LEFT:
                             if(player.getDirection() != Direction.WEST) {
-                                player.setDirection(Direction.WEST);
+                                player.setFacingDirection(Direction.WEST);
                             }
                             GlobalVariable.shooting = true;
                             break;
                         case JoyStickClass.STICK_UPLEFT:
                             if(player.getDirection() != Direction.NORTHWEST) {
-                                player.setDirection(Direction.NORTHWEST);
+                                player.setFacingDirection(Direction.NORTHWEST);
                             }
                             GlobalVariable.shooting = true;
                             break;
