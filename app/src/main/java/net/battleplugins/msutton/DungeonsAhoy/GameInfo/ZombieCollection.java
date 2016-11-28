@@ -1,5 +1,6 @@
 package net.battleplugins.msutton.DungeonsAhoy.GameInfo;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
 import android.view.View;
@@ -33,10 +34,14 @@ public class ZombieCollection implements Iterator<Zombie> {
 
         if(layout instanceof LinearLayout){
             try {
-                LinearLayout ll = (LinearLayout) layout;
+                Activity ac = (Activity)context;
+                LinearLayout ll = (LinearLayout) ac.findViewById(R.id.linearLayout);
 
-                iv.setX(ll.getX() + ll.getWidth() / 2);
-                iv.setY(ll.getY() + ll.getHeight() / 2);
+
+                iv.setX(ll.getWidth() / 2);
+
+                System.out.println("ll.getWidth = " + ll.getWidth());
+                iv.setY(ll.getHeight() / 2);
                 iv.setImageResource(R.drawable.zombie);
 
                 ll.addView(iv);

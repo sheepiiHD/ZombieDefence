@@ -10,6 +10,7 @@ public class GlobalVariable {
     public static boolean moving;
     public static boolean dev_mode;
     public static boolean shooting;
+    public static int playerY, playerX;
 
 
     public static int playerSpeed = 500;

@@ -25,12 +25,13 @@ public class Zombie{
 
 
     public Zombie(ImageView zImage, Point pLocation, float speed){
-        this.X = zImage.getX();
+        this.zImage = zImage;
+        this.X = zImage.getX()-100;
         this.Y = zImage.getY();
         this.Width = zImage.getWidth();
         this.Height = zImage.getHeight();
         fdirc = Direction.EAST;
-        this.zImage = zImage;
+
         this.dead = false;
         this.pLocation = pLocation;
 
@@ -45,9 +46,10 @@ public class Zombie{
         public void run() {
             try {
                 while(!dead) {
-                    moveTowardsPlayer();
+                    Point p = new Point(GlobalVariable.playerX, GlobalVariable.playerY);
+                    moveTowardsPlayer(p);
 
-                    Thread.sleep(1000);
+                    Thread.sleep(10);
                     updateZombie.sendEmptyMessage(0);
                 }
             } catch (InterruptedException e) {
@@ -60,25 +62,44 @@ public class Zombie{
 
             /** Because the zombie should always be on top! **/
             zImage.bringToFront();
-            System.out.println();
             zImage.setX(X);
             zImage.setY(Y);
+
         }
     };
 
-    private void moveTowardsPlayer(){
+    private void moveTowardsPlayer(Point p){
+        int compareX = p.x - (int)X;
+        int compareY = p.y - (int)Y;
+        l("x = " + compareX);
+        l("y = " + compareY);
 
-        // They're to the east
-        if(pLocation.x > X){
-            X -= speed/100000;
-        }else{
-            X += speed/100000;
+
+        // Y is closer, so we're moving horizontally.
+        if(Math.abs(compareX) < Math.abs(compareY)){
+            //Moving North
+            if(p.y > Y){
+                Y+=1;
+            }
+            //Moving South
+            else if(p.y < Y){
+                Y-=1;
+            }
         }
-        //They're to the North
-        if(pLocation.y > Y){
-            Y += speed/100000;
-        }else{
-            Y -= speed/100000;
+        // X is closer, so we're moving vertically.
+        else{
+            //Moving East
+            if(p.x > X){
+                X+=1;
+            }
+            //Moving West
+            else if(p.x < X){
+                X-=1;
+            }
+
         }
+    }
+    public void l(Object string){
+        System.out.println("Log - " + string);
     }
 }

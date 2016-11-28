@@ -44,10 +44,10 @@ public class MainActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
+
+
         View v = findViewById(R.id.linearLayout);
 
-
-        View view = findViewById(R.id.linearLayout);
 
 
         v.setBackgroundColor(Color.GRAY);
@@ -58,8 +58,9 @@ public class MainActivity extends AppCompatActivity {
         int y = (int)image_player.getY();
 
 
+
         Point p = new Point(x, y);
-        zombieCollection.spawn(this, view, 1, p);
+        zombieCollection.spawn(this, v, 1, p);
 
         if(dev_mode){
             enableDeveloperMode();
@@ -109,6 +110,9 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage(android.os.Message msg) {
             image_player.setX(player.x);
             image_player.setY(player.y);
+
+            GlobalVariable.playerX = (int)player.x;
+            GlobalVariable.playerY = (int)player.y;
         }
     };
 
