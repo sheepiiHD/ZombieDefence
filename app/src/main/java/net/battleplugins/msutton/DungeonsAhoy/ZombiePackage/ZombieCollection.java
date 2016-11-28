@@ -1,4 +1,4 @@
-package net.battleplugins.msutton.DungeonsAhoy.GameInfo;
+package net.battleplugins.msutton.DungeonsAhoy.ZombiePackage;
 
 import android.app.Activity;
 import android.content.Context;
@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import net.battleplugins.msutton.DungeonsAhoy.Zombie;
 import net.battleplugins.msutton.game_project.R;
 
 import java.util.ArrayList;

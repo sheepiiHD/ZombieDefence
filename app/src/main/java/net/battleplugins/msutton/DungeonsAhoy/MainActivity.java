@@ -9,19 +9,17 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import net.battleplugins.msutton.DungeonsAhoy.GameInfo.Difficulty;
 import net.battleplugins.msutton.DungeonsAhoy.GameInfo.Direction;
-import net.battleplugins.msutton.DungeonsAhoy.GameInfo.ZombieCollection;
+import net.battleplugins.msutton.DungeonsAhoy.ZombiePackage.ZombieCollection;
 import net.battleplugins.msutton.game_project.R;
 
 public class MainActivity extends AppCompatActivity {

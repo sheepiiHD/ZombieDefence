@@ -1,11 +1,11 @@
-package net.battleplugins.msutton.DungeonsAhoy;
+package net.battleplugins.msutton.DungeonsAhoy.ZombiePackage;
 
-import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Handler;
 import android.widget.ImageView;
 
 import net.battleplugins.msutton.DungeonsAhoy.GameInfo.Direction;
+import net.battleplugins.msutton.DungeonsAhoy.GlobalVariable;
 
 /**
  * Created by Matt Sutton on 11/27/2016.
