@@ -1,5 +1,6 @@
 package net.battleplugins.msutton.DungeonsAhoy;
 
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -7,6 +8,7 @@ import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
@@ -17,82 +19,131 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import net.battleplugins.msutton.DungeonsAhoy.GameInfo.Difficulty;
-import net.battleplugins.msutton.DungeonsAhoy.GameInfo.Direction;
-import net.battleplugins.msutton.DungeonsAhoy.ZombiePackage.ZombieCollection;
+import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.Direction;
+import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.GameStatus;
+import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.GlobalVariables;
+import net.battleplugins.msutton.DungeonsAhoy.Tools.JoyStickClass;
+import net.battleplugins.msutton.DungeonsAhoy.Tools.PlayerInfo.Player;
+import net.battleplugins.msutton.DungeonsAhoy.Tools.ZombieInfo.ZombieCollection;
 import net.battleplugins.msutton.game_project.R;
 
 public class MainActivity extends AppCompatActivity {
 
-    Boolean dev_mode = GlobalVariable.dev_mode;
-
+    /** Joystick Variables **/
+    JoyStickClass js_move, js_shoot;
     RelativeLayout layout_joystick_move, layout_joystick_shoot;
+
+
     ImageView image_player;
     TextView textView1, textView2, textView3, textView4, textView5, textView6;
-    Bitmap p;
-    JoyStickClass js_move, js_shoot;
+
+
 
     ZombieCollection zombieCollection = new ZombieCollection();
 
     Player player;
+
+    GameStatus gs;
+
+    int[] locations = new int[2];
+
+    int wave = 0;
+    int level = 1;
+
+    Context c;
+
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        /** Pre setup **/
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+
+        /** Setup content **/
         setContentView(R.layout.activity_main);
 
-
-        View v = findViewById(R.id.linearLayout);
-
-
-
-        v.setBackgroundColor(Color.GRAY);
-
+        /** Instantiate player **/
         image_player = (ImageView)findViewById(R.id.player);
 
         int x = (int)image_player.getX();
         int y = (int)image_player.getY();
-
-
-
         Point p = new Point(x, y);
-        zombieCollection.spawn(this, v, 1, p);
 
-        if(dev_mode){
-            enableDeveloperMode();
-        }else{
-            player = new Player(Difficulty.Medium);
-        }
+
+        /** Visuals **/
         populateTextViews();
+        setUpVisuals();
+        checkDevMode();
+
+        /** Joysticks **/
         setupJoysticks();
         initiateMovementJoystickListener();
         initiateShootingJoystickListener();
-        setUpVisuals();
+
+        /** Threading **/
+        c = this;
 
         Thread move = new Thread(calculateMovement);
         move.start();
 
+        Thread catchPos = new Thread(updateLocations);
+        catchPos.start();
+
+        gs = GameStatus.RUNNING;
+
+        Thread spawn = new Thread(spawnZombies);
+        spawn.start();
+
     }
-    private void enableDeveloperMode(){
-        textView1.setVisibility(View.VISIBLE);
-        textView2.setVisibility(View.VISIBLE);
-        textView3.setVisibility(View.VISIBLE);
-        textView4.setVisibility(View.VISIBLE);
-        textView5.setVisibility(View.VISIBLE);
-        textView6.setVisibility(View.VISIBLE);
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+
+        super.onWindowFocusChanged(hasFocus);
+
+        if(hasFocus){
+            //TODO Things
+        }
+
     }
+
     private void fillDirectionPlayer(){
         textView6.setText("Direction Player: " + player.getDirection().getDirectionAsString());
     }
 
+    /**
+     *  ░███░░█░░░░█░█░░░█░█░░░█░░░███░░░███░░█░░░████░░███░
+     *  ░█░░█░█░░░░█░██░░█░██░░█░░█░░░█░░█░░█░█░░░█░░░░█░░░░
+     *  ░███░░█░░░░█░█░█░█░█░█░█░░█████░░███░░█░░░████░░██░░
+     *  ░█░█░░█░░░░█░█░░██░█░░██░░█░░░█░░█░░█░█░░░█░░░░░░░█░
+     *  ░█░░█░░████░░█░░░█░█░░░█░░█░░░█░░████░███░████░███░░
+     */
+
+    private Runnable spawnZombies = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                while(gs.equals(GameStatus.RUNNING)) {
+                    zombieCollection.spawn(c, findViewById(R.id.linearLayout), level, player);
+                    Thread.sleep(GlobalVariables.waveTime);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    };
     private Runnable calculateMovement = new Runnable() {
         @Override
         public void run() {
             try {
                 while(true) {
-                    if(GlobalVariable.moving) {
+                    if(GlobalVariables.moving) {
                         player.mPlayer();
                     }
 
@@ -104,13 +155,25 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    private Runnable updateLocations = new Runnable(){
+        @Override
+        public void run(){
+            try {
+                while(true) {
+                    image_player.getLocationInWindow(locations);
+                    Thread.sleep(500);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    };
     public Handler updatePlayer = new Handler() {
-        public void handleMessage(android.os.Message msg) {
+        public void handleMessage(Message msg) {
             image_player.setX(player.x);
             image_player.setY(player.y);
 
-            GlobalVariable.playerX = (int)player.x;
-            GlobalVariable.playerY = (int)player.y;
         }
     };
 
@@ -144,9 +207,11 @@ public class MainActivity extends AppCompatActivity {
         js_move.setOffset(20);
         js_move.setMinimumDistance(20);
 
+        initiateMovementJoystickListener();
         /**
          * Shooting Joystick
          */
+
         layout_joystick_shoot = (RelativeLayout)findViewById(R.id.layout_joystick_shooting);
 
         js_shoot = new JoyStickClass(getApplicationContext(), layout_joystick_shoot, R.drawable.image_button);
@@ -157,6 +222,7 @@ public class MainActivity extends AppCompatActivity {
         js_shoot.setOffset(20);
         js_shoot.setMinimumDistance(20);
 
+        initiateShootingJoystickListener();
     }
 
     /**
@@ -178,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
                     textView3.setText("Angle : " + String.valueOf(js_move.getAngle()));
                     textView4.setText("Distance : " + String.valueOf(js_move.getDistance()));
 
-                    GlobalVariable.moving = true;
+                    GlobalVariables.moving = true;
 
                     Bitmap p = ((BitmapDrawable)ResourcesCompat.getDrawable(getResources(), R.drawable.player, null)).getBitmap();
 
@@ -188,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
                             textView5.setText("Direction : Up");
                             if(player.getDirection() != Direction.NORTH) {
                                 player.setDirection(Direction.NORTH);
-                                if(GlobalVariable.shooting == false) {
+                                if(GlobalVariables.shooting == false) {
                                     player.setFacingDirection(Direction.NORTH);
                                 }
                             }
@@ -198,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
                             textView5.setText("Direction : Up Right");
                             if(player.getDirection() != Direction.NORTHEAST) {
                                 player.setDirection(Direction.NORTHEAST);
-                                if(GlobalVariable.shooting == false) {
+                                if(GlobalVariables.shooting == false) {
                                     player.setFacingDirection(Direction.NORTHEAST);
                                 }
                             }
@@ -208,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
                             textView5.setText("Direction : Right");
                             if(player.getDirection() != Direction.EAST) {
                                 player.setDirection(Direction.EAST);
-                                if(GlobalVariable.shooting == false) {
+                                if(GlobalVariables.shooting == false) {
                                     player.setFacingDirection(Direction.EAST);
                                 }
                             }
@@ -218,7 +284,7 @@ public class MainActivity extends AppCompatActivity {
                             textView5.setText("Direction : Down Right");
                             if(player.getDirection() != Direction.SOUTHEAST) {
                                 player.setDirection(Direction.SOUTHEAST);
-                                if(GlobalVariable.shooting == false) {
+                                if(GlobalVariables.shooting == false) {
                                     player.setFacingDirection(Direction.SOUTHEAST);
                                 }
                             }
@@ -228,7 +294,7 @@ public class MainActivity extends AppCompatActivity {
                             textView5.setText("Direction : Down");
                             if(player.getDirection() != Direction.SOUTH) {
                                 player.setDirection(Direction.SOUTH);
-                                if(GlobalVariable.shooting == false) {
+                                if(GlobalVariables.shooting == false) {
                                     player.setFacingDirection(Direction.SOUTH);
                                 }
                             }
@@ -239,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
                             textView5.setText("Direction : Down Left");
                             if(player.getDirection() != Direction.SOUTHWEST) {
                                 player.setDirection(Direction.SOUTHWEST);
-                                if(GlobalVariable.shooting == false) {
+                                if(GlobalVariables.shooting == false) {
                                     player.setFacingDirection(Direction.SOUTHWEST);
                                 }
                             }
@@ -249,7 +315,7 @@ public class MainActivity extends AppCompatActivity {
                             textView5.setText("Direction : Left");
                             if(player.getDirection() != Direction.WEST) {
                                 player.setDirection(Direction.WEST);
-                                if(GlobalVariable.shooting == false) {
+                                if(GlobalVariables.shooting == false) {
                                     player.setFacingDirection(Direction.WEST);
                                 }
                             }
@@ -259,7 +325,7 @@ public class MainActivity extends AppCompatActivity {
                             textView5.setText("Direction : Up Left");
                             if(player.getDirection() != Direction.NORTHWEST) {
                                 player.setDirection(Direction.NORTHWEST);
-                                if(GlobalVariable.shooting == false) {
+                                if(GlobalVariables.shooting == false) {
                                     player.setFacingDirection(Direction.NORTHWEST);
                                 }
                             }
@@ -279,7 +345,7 @@ public class MainActivity extends AppCompatActivity {
                     textView5.setText("Direction :");
                     textView6.setText("Direction :");
 
-                    GlobalVariable.moving = false;
+                    GlobalVariables.moving = false;
                 }
                 return true;
             }
@@ -294,7 +360,7 @@ public class MainActivity extends AppCompatActivity {
                         || arg1.getAction() == MotionEvent.ACTION_MOVE) {
 
 
-                    GlobalVariable.shooting = true;
+                    GlobalVariables.shooting = true;
 
 
                     int direction = js_shoot.get8Direction();
@@ -304,66 +370,87 @@ public class MainActivity extends AppCompatActivity {
                             if(player.getDirection() != Direction.NORTH) {
                                 player.setFacingDirection(Direction.NORTH);
                             }
-                            GlobalVariable.shooting = true;
+                            GlobalVariables.shooting = true;
                             break;
                         case JoyStickClass.STICK_UPRIGHT:
                             if(player.getDirection() != Direction.NORTHEAST) {
                                 player.setFacingDirection(Direction.NORTHEAST);
                             }
-                            GlobalVariable.shooting = true;
+                            GlobalVariables.shooting = true;
                             break;
                         case JoyStickClass.STICK_RIGHT:
                             if(player.getDirection() != Direction.EAST) {
                                 player.setFacingDirection(Direction.EAST);
                             }
-                            GlobalVariable.shooting = true;
+                            GlobalVariables.shooting = true;
                             break;
                         case JoyStickClass.STICK_DOWNRIGHT:
                             if(player.getDirection() != Direction.SOUTHEAST) {
                                 player.setFacingDirection(Direction.SOUTHEAST);
                             }
-                            GlobalVariable.shooting = true;
+                            GlobalVariables.shooting = true;
                             break;
                         case JoyStickClass.STICK_DOWN:
                             if(player.getDirection() != Direction.SOUTH) {
                                 player.setFacingDirection(Direction.SOUTH);
                             }
-                            GlobalVariable.shooting = true;
+                            GlobalVariables.shooting = true;
                             break;
                         case JoyStickClass.STICK_DOWNLEFT:
                             if(player.getDirection() != Direction.SOUTHWEST) {
                                 player.setFacingDirection(Direction.SOUTHWEST);
                             }
-                            GlobalVariable.shooting = true;
+                            GlobalVariables.shooting = true;
                             break;
                         case JoyStickClass.STICK_LEFT:
                             if(player.getDirection() != Direction.WEST) {
                                 player.setFacingDirection(Direction.WEST);
                             }
-                            GlobalVariable.shooting = true;
+                            GlobalVariables.shooting = true;
                             break;
                         case JoyStickClass.STICK_UPLEFT:
                             if(player.getDirection() != Direction.NORTHWEST) {
                                 player.setFacingDirection(Direction.NORTHWEST);
                             }
-                            GlobalVariable.shooting = true;
+                            GlobalVariables.shooting = true;
                             break;
                         case JoyStickClass.STICK_NONE:
-                            GlobalVariable.shooting = false;
+                            GlobalVariables.shooting = false;
                             break;
                     }
                     player.rPlayer();
 
                 } else if(arg1.getAction() == MotionEvent.ACTION_UP) {
-                    GlobalVariable.shooting = false;
+                    GlobalVariables.shooting = false;
                 }
                 return true;
             }
         });
     }
 
+    /**
+     *  VISUALS
+     */
     private void setUpVisuals(){
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        findViewById(R.id.linearLayout).setBackgroundColor(Color.GRAY);
+    }
+    private void checkDevMode(){
+        if(GlobalVariables.dev_mode) {
+            textView1.setVisibility(View.VISIBLE);
+            textView2.setVisibility(View.VISIBLE);
+            textView3.setVisibility(View.VISIBLE);
+            textView4.setVisibility(View.VISIBLE);
+            textView5.setVisibility(View.VISIBLE);
+            textView6.setVisibility(View.VISIBLE);
+        }else{
+            textView1.setVisibility(View.GONE);
+            textView2.setVisibility(View.GONE);
+            textView3.setVisibility(View.GONE);
+            textView4.setVisibility(View.GONE);
+            textView5.setVisibility(View.GONE);
+            textView6.setVisibility(View.GONE);
+        }
     }
 
 }

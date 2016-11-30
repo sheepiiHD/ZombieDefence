@@ -1,4 +1,4 @@
-package net.battleplugins.msutton.DungeonsAhoy;
+package net.battleplugins.msutton.DungeonsAhoy.Tools.PlayerInfo;
 
 import android.app.Activity;
 import android.content.Context;
@@ -6,9 +6,9 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.widget.ImageView;
 
-import net.battleplugins.msutton.DungeonsAhoy.GameInfo.Difficulty;
-import net.battleplugins.msutton.DungeonsAhoy.GameInfo.Direction;
-import net.battleplugins.msutton.DungeonsAhoy.GameInfo.WeaponType;
+import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.Difficulty;
+import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.Direction;
+import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.WeaponType;
 import net.battleplugins.msutton.game_project.R;
 
 /**
@@ -18,16 +18,16 @@ import net.battleplugins.msutton.game_project.R;
 
 public class Player {
 
-    Direction dirc;
-    Direction fdirc;
-    WeaponType wt;
-    Difficulty difficulty;
-    private Context context;
-    float a = 0;
-    Bitmap playerimage;
-    float x, y;
-    float velocity;
+    protected Direction dirc;
+    protected Direction fdirc;
+    protected WeaponType wt;
+    protected Difficulty difficulty;
+    protected Context context;
+    protected float a = 0;
+    protected Bitmap playerimage;
+    protected float velocity;
 
+    public float x, y;
 
     public Player(Context context, Bitmap p, float x, float y) {
         dirc = Direction.EAST;

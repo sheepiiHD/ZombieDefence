@@ -1,6 +1,6 @@
-package net.battleplugins.msutton.DungeonsAhoy.GameInfo;
+package net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo;
 
-import net.battleplugins.msutton.DungeonsAhoy.GlobalVariable;
+import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.GlobalVariables;
 
 /**
  * Created by mts01060 on 11/15/2016.
@@ -17,7 +17,7 @@ public class CheckRunning implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            System.out.println("The boolean is: " + GlobalVariable.running);
+            System.out.println("The boolean is: " + GlobalVariables.running);
         }
     }
 }

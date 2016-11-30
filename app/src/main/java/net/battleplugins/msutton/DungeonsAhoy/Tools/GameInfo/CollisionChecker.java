@@ -1,4 +1,4 @@
-package net.battleplugins.msutton.DungeonsAhoy.GameInfo;
+package net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo;
 
 /**
  * Created by Matt Sutton on 11/27/2016.

@@ -1,4 +1,4 @@
-package net.battleplugins.msutton.DungeonsAhoy;
+package net.battleplugins.msutton.DungeonsAhoy.Tools;
 /**
  * This class is sourced from: https://www.youtube.com/watch?v=Em4Qa09-y90
  */

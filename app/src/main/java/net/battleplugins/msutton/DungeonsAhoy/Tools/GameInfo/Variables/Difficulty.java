@@ -1,4 +1,4 @@
-package net.battleplugins.msutton.DungeonsAhoy.GameInfo;
+package net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables;
 
 /**
  * Created by mts01060 on 11/14/2016.
@@ -37,8 +37,5 @@ public class Difficulty {
             case 4:
                 wt = WeaponType.DULL_SPOON;
         }
-    }
-    private void InitializeStaterWeapon(int dif){
-
     }
 }
