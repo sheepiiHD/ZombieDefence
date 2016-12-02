@@ -70,10 +70,8 @@ public class MainActivity extends AppCompatActivity {
 
         /** Instantiate player **/
         image_player = (ImageView)findViewById(R.id.player);
-
-        int x = (int)image_player.getX();
-        int y = (int)image_player.getY();
-        Point p = new Point(x, y);
+        Bitmap p = ((BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.player, null)).getBitmap();
+        player = new Player(image_player, (int)image_player.getX(), (int)image_player.getY(), p);
 
 
         /** Visuals **/
@@ -89,32 +87,18 @@ public class MainActivity extends AppCompatActivity {
         /** Threading **/
         c = this;
 
-        Thread move = new Thread(calculateMovement);
-        move.start();
+        zombieCollection.spawn(c, findViewById(R.id.linearLayout), level, player);
+
+
 
         Thread catchPos = new Thread(updateLocations);
         catchPos.start();
 
         gs = GameStatus.RUNNING;
 
-        Thread spawn = new Thread(spawnZombies);
-        spawn.start();
+        //Thread spawn = new Thread(spawnZombies);
+        //spawn.start();
 
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-
-        super.onWindowFocusChanged(hasFocus);
-
-        if(hasFocus){
-            //TODO Things
-        }
-
-    }
-
-    private void fillDirectionPlayer(){
-        textView6.setText("Direction Player: " + player.getDirection().getDirectionAsString());
     }
 
     /**
@@ -138,23 +122,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
-    private Runnable calculateMovement = new Runnable() {
-        @Override
-        public void run() {
-            try {
-                while(true) {
-                    if(GlobalVariables.moving) {
-                        player.mPlayer();
-                    }
-
-                    Thread.sleep(5);
-                    updatePlayer.sendEmptyMessage(0);
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    };
 
     private Runnable updateLocations = new Runnable(){
         @Override
@@ -167,13 +134,6 @@ public class MainActivity extends AppCompatActivity {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
-    };
-    public Handler updatePlayer = new Handler() {
-        public void handleMessage(Message msg) {
-            image_player.setX(player.x);
-            image_player.setY(player.y);
-
         }
     };
 
@@ -198,8 +158,7 @@ public class MainActivity extends AppCompatActivity {
          */
         layout_joystick_move = (RelativeLayout)findViewById(R.id.layout_joystick_movement);
 
-        js_move = new JoyStickClass(getApplicationContext()
-                , layout_joystick_move, R.drawable.image_button);
+        js_move = new JoyStickClass(getApplicationContext(), layout_joystick_move, R.drawable.image_button);
         js_move.setStickSize(50, 50);
         js_move.setLayoutSize(150, 150);
         js_move.setLayoutAlpha(35);
@@ -230,8 +189,6 @@ public class MainActivity extends AppCompatActivity {
      */
     private void initiateMovementJoystickListener(){
 
-        Bitmap p = ((BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.player, null)).getBitmap();
-        player = new Player(this, p, image_player.getX(), image_player.getY());
 
 
         layout_joystick_move.setOnTouchListener(new View.OnTouchListener() {
@@ -239,14 +196,12 @@ public class MainActivity extends AppCompatActivity {
                 js_move.drawStick(arg1);
                 if(arg1.getAction() == MotionEvent.ACTION_DOWN
                         || arg1.getAction() == MotionEvent.ACTION_MOVE) {
-                    textView1.setText("X : " + String.valueOf(js_move.getX()));
-                    textView2.setText("Y : " + String.valueOf(js_move.getY()));
+                    textView1.setText("Player X : " + player.getPosition()[0]);
+                    textView2.setText("Player Y : " + player.getPosition()[1]);
                     textView3.setText("Angle : " + String.valueOf(js_move.getAngle()));
                     textView4.setText("Distance : " + String.valueOf(js_move.getDistance()));
 
                     GlobalVariables.moving = true;
-
-                    Bitmap p = ((BitmapDrawable)ResourcesCompat.getDrawable(getResources(), R.drawable.player, null)).getBitmap();
 
                     int direction = js_move.get8Direction();
                     switch(direction){
@@ -434,6 +389,9 @@ public class MainActivity extends AppCompatActivity {
     private void setUpVisuals(){
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         findViewById(R.id.linearLayout).setBackgroundColor(Color.GRAY);
+    }
+    private void fillDirectionPlayer(){
+        textView6.setText("Direction Player: " + player.getDirection().getDirectionAsString());
     }
     private void checkDevMode(){
         if(GlobalVariables.dev_mode) {

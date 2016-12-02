@@ -15,7 +15,6 @@ public class WeaponType {
     public static final WeaponType BUTTERKNIFE = new WeaponType("Butterknife", .04, 1);
     public static final WeaponType DULL_SPOON = new WeaponType("Dull Spoon", .02, 1);
 
-
     String weaponName = "";
     double damage = 0;
     int tier = 0;

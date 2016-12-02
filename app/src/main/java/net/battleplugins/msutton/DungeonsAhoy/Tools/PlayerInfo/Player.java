@@ -1,207 +1,186 @@
 package net.battleplugins.msutton.DungeonsAhoy.Tools.PlayerInfo;
 
-import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.widget.ImageView;
 
-import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.Difficulty;
 import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.Direction;
-import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.WeaponType;
-import net.battleplugins.msutton.game_project.R;
+import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.GlobalVariables;
 
 /**
- * Created by mts01060 on 11/14/2016.
+ * Created by mts01060 on 11/30/2016.
  */
-
 
 public class Player {
 
     protected Direction dirc;
     protected Direction fdirc;
-    protected WeaponType wt;
-    protected Difficulty difficulty;
-    protected Context context;
     protected float a = 0;
+    protected float x, y;
     protected Bitmap playerimage;
+    protected ImageView pImage;
     protected float velocity;
 
-    public float x, y;
-
-    public Player(Context context, Bitmap p, float x, float y) {
-        dirc = Direction.EAST;
-        fdirc = Direction.EAST;
-        difficulty = Difficulty.Medium;
-        this.context = context;
+    public Player(ImageView pImage, float x, float y, Bitmap p) {
+        this.dirc = Direction.EAST;
+        this.fdirc = Direction.EAST;
         this.x = x;
         this.y = y;
-        playerimage = p;
+        this.playerimage = p;
+        this.pImage = pImage;
+
         velocity = 1;
+
+        /** Threading **/
+        Thread movementThread = new Thread(calculateMovement);
+        movementThread.start();
     }
 
-    public Player(Difficulty dif) {
-        this.difficulty = dif;
-    }
+    /**
+     *  ░███░░█░░░░█░█░░░█░█░░░█░░░███░░░███░░█░░░████░░███░
+     *  ░█░░█░█░░░░█░██░░█░██░░█░░█░░░█░░█░░█░█░░░█░░░░█░░░░
+     *  ░███░░█░░░░█░█░█░█░█░█░█░░█████░░███░░█░░░████░░██░░
+     *  ░█░█░░█░░░░█░█░░██░█░░██░░█░░░█░░█░░█░█░░░█░░░░░░░█░
+     *  ░█░░█░░████░░█░░░█░█░░░█░░█░░░█░░████░███░████░███░░
+     */
+    private Runnable calculateMovement = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                while (true) {
+                    if (GlobalVariables.moving) {
+                        mPlayer();
+                    }
 
-    public Direction setDirection(Direction direction) {
-        return this.dirc = direction;
-    }
-
-    public Direction getDirection() {
-        return this.dirc;
-    }
-
-    public Direction setFacingDirection(Direction direction){ return this.fdirc = direction; }
-
-    public Direction getFacingDirection(){ return this.fdirc; }
-
-    public Difficulty setDifficulty(Difficulty difficulty) {
-        return this.difficulty = difficulty;
-    }
-
-    public Difficulty getDifficulty() {
-        return this.difficulty;
-    }
-
-    public WeaponType setWeaponType(WeaponType wt) {
-        return this.wt = wt;
-    }
-
-    public WeaponType getWeaponType() {
-        return this.wt;
-    }
-
-    public void mPlayer(){
-        Direction direction = getDirection();
-        boolean wegood;
-        ImageView player = null;
-        Bitmap playerpic = playerimage;
-        try {
-            player = (ImageView)((Activity)context).findViewById(R.id.player);
-            if(player != null && playerpic != null) {
-                wegood = true;
-            }else{
-                System.out.println(player + " " + playerpic);
-                wegood = false;
+                    Thread.sleep(5);
+                    updatePlayer.sendEmptyMessage(0);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        }catch(NullPointerException e) {
-            System.out.println("WE NOT GOOD HOMIE");
-            wegood = false;
         }
-        if(wegood) {
-            Bitmap temp;
-            switch (direction.getDirectionActual()) {
-                /**
-                 * 000 = East
-                 * 045 = North East
-                 * 090 = North
-                 * 135 = North West
-                 * 180 = West
-                 * 225 = South West
-                 * 270 = South
-                 * 315 = South East
-                 */
-                //North
-                case 0:
-                    y = y - velocity;
+    };
 
-                    break;
-                //East
-                case 1:
-                    x = x + velocity;
-                    break;
-                case 2:
-                    y = y + velocity;
-                    break;
-                case 3:
-                    x = x - velocity;
-                    break;
-                case 4:
-                    y = y - velocity/(float)1.5;
-                    x = x + velocity/(float)1.5;
-                    break;
-                case 5:
-                    y = y - velocity/(float)1.5;
-                    x = x - velocity/(float)1.5;
-                    break;
-                case 6:
-                    y = y + velocity/(float)1.5;
-                    x = x + velocity/(float)1.5;
-                    break;
-                case 7:
-                    y = y + velocity/(float)1.5;
-                    x = x - velocity/(float)1.5;
-                    break;
-            }
-        }else{
+    public Handler updatePlayer = new Handler() {
+        public void handleMessage(Message msg) {
+            Log.d("My app", "x = " + x);
+            pImage.setX(x);
+            pImage.setY(y);
+
+        }
+    };
+
+
+    /**
+     * MOVE PLAYER
+     **/
+    public void mPlayer() {
+        switch (dirc.getDirectionActual()) {
+            case 0:
+                y = y - velocity;
+                break;
+            case 1:
+                x = x + velocity;
+                break;
+            case 2:
+                y = y + velocity;
+                break;
+            case 3:
+                x = x - velocity;
+                break;
+            case 4:
+                y = y - velocity / (float) 1.5;
+                x = x + velocity / (float) 1.5;
+                break;
+            case 5:
+                y = y - velocity / (float) 1.5;
+                x = x - velocity / (float) 1.5;
+                break;
+            case 6:
+                y = y + velocity / (float) 1.5;
+                x = x + velocity / (float) 1.5;
+                break;
+            case 7:
+                y = y + velocity / (float) 1.5;
+                x = x - velocity / (float) 1.5;
+                break;
         }
     }
 
-    public void shoot(){
-        ImageView iv = new ImageView(context);
+    /**
+     * SHOOT PLAYER
+     **/
+    public void sPlayer() {
+        if(GlobalVariables.shooting){
+
+        }
     }
+
+    /**
+     * ROTATE PLAYER
+     **/
     public void rPlayer() {
-        Direction direction = getFacingDirection();
-        boolean wegood;
-        ImageView player = null;
-        Bitmap playerpic = playerimage;
-        try {
-            player = (ImageView)((Activity)context).findViewById(R.id.player);
-            if(player != null && playerpic != null) {
-                wegood = true;
-            }else{
-                System.out.println(player + " " + playerpic);
-                wegood = false;
-            }
-        }catch(NullPointerException e) {
-            System.out.println("WE NOT GOOD HOMIE");
-            wegood = false;
-        }
-        if(wegood) {
-            switch (direction.getDirectionActual()) {
-                /**
-                 * 000 = East
-                 * 045 = North East
-                 * 090 = North
-                 * 135 = North West
-                 * 180 = West
-                 * 225 = South West
-                 * 270 = South
-                 * 315 = South East
-                 */
-                //North
-                case 0:
-                    player.setImageBitmap(rotatePlayer(playerpic, 270));
-                    break;
-                //East
-                case 1:
-                    player.setImageBitmap(rotatePlayer(playerpic, 0));
-                    break;
-                case 2:
-                    player.setImageBitmap(rotatePlayer(playerpic, 90));
-                    break;
-                case 3:
-                    player.setImageBitmap(rotatePlayer(playerpic, 180));
-                    break;
-                case 4:
-                    player.setImageBitmap(rotatePlayer(playerpic, 315));
-                    break;
-                case 5:
-                    player.setImageBitmap(rotatePlayer(playerpic, 225));
-                    break;
-                case 6:
-                    player.setImageBitmap(rotatePlayer(playerpic, 45));
-                    break;
-                case 7:
-                    player.setImageBitmap(rotatePlayer(playerpic, 135));
-                    break;
+        switch (fdirc.getDirectionActual()) {
+            /**
+             * 000 = East
+             * 045 = North East
+             * 090 = North
+             * 135 = North West
+             * 180 = West
+             * 225 = South West
+             * 270 = South
+             * 315 = South East
+             */
+            case 0:
+                pImage.setImageBitmap(rotatePlayer(playerimage, 270));
+                break;
+            case 1:
+                pImage.setImageBitmap(rotatePlayer(playerimage, 0));
+                break;
+            case 2:
+                pImage.setImageBitmap(rotatePlayer(playerimage, 90));
+                break;
+            case 3:
+                pImage.setImageBitmap(rotatePlayer(playerimage, 180));
+                break;
+            case 4:
+                pImage.setImageBitmap(rotatePlayer(playerimage, 315));
+                break;
+            case 5:
+                pImage.setImageBitmap(rotatePlayer(playerimage, 225));
+                break;
+            case 6:
+                pImage.setImageBitmap(rotatePlayer(playerimage, 45));
+                break;
+            case 7:
+                pImage.setImageBitmap(rotatePlayer(playerimage, 135));
+                break;
 
-            }
-        }else{
         }
     }
 
+    public Direction getDirection(){
+        return dirc;
+    }
+    public void setDirection(Direction dirc){
+        this.dirc = dirc;
+    }
+    public Direction getFacingDirection(){
+        return fdirc;
+    }
+    public void setFacingDirection(Direction fdirc){
+        this.fdirc = fdirc;
+    }
+
+    public int[] getPosition(){
+        int[] pCords = new int[2];
+        pImage.getLocationOnScreen(pCords);
+
+        return pCords;
+    }
     private Bitmap rotatePlayer(Bitmap src, float angle) {
         try {
             Matrix m = new Matrix();
@@ -212,4 +191,5 @@ public class Player {
             return null;
         }
     }
+
 }

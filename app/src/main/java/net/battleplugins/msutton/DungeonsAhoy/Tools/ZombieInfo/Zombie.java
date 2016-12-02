@@ -20,13 +20,17 @@ public class Zombie{
     Player player;
 
     boolean dead;
+    int[] zLoc;
 
 
 
     public Zombie(ImageView zImage, Player player){
+        zLoc = new int[2];
+        zImage.getLocationOnScreen(zLoc);
+
         this.zImage = zImage;
-        this.X = zImage.getX()-100;
-        this.Y = zImage.getY();
+        this.X = zLoc[0];
+        this.Y = zLoc[1];
         this.Width = zImage.getWidth();
         this.Height = zImage.getHeight();
         this.fdirc = Direction.EAST;
@@ -37,12 +41,15 @@ public class Zombie{
         thread.start();
     }
 
+    public ImageView getZombieImage(){
+        return zImage;
+    }
     private Runnable startZombieChase = new Runnable() {
         @Override
         public void run() {
             try {
                 while(!dead) {
-                    moveTowardsPlayer((int)player.x, (int)player.y);
+                    moveTowardsPlayer();
 
                     Thread.sleep(10);
                     updateZombie.sendEmptyMessage(0);
@@ -63,9 +70,13 @@ public class Zombie{
         }
     };
 
-    private void moveTowardsPlayer(int player_x, int player_y){
-        int compareX = player_x - (int)X;
-        int compareY = player_y - (int)Y;
+    private void moveTowardsPlayer(){
+        int player_x = player.getPosition()[0];
+        int player_y = player.getPosition()[1];
+
+        float compareX = player_x - (int)X;
+        float compareY = player_y - (int)Y;
+
 
 
         // Y is closer, so we're moving horizontally.

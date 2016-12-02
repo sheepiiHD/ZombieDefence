@@ -28,6 +28,9 @@ public class ZombieCollection implements Iterator<Zombie> {
     public boolean hasNext(){
         return zombieList.iterator().hasNext();
     }
+
+    public Iterator<Zombie> getZombies = zombieList.iterator();
+
     public void spawn(Context context, View layout, int amount, Player player){
         for(int i = 0; i < amount; i++) {
             ImageView iv = new ImageView(context);

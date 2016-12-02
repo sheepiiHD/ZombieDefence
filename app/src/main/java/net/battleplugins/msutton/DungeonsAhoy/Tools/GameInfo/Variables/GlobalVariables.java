@@ -13,11 +13,8 @@ public class GlobalVariables {
     public static boolean running;
     public static boolean moving;
     public static boolean shooting;
-    public static int playerY, playerX;
-    public static final long speed = 1000;
 
     /** Game Settings **/
-    public static final int startinglevel = 1;
     public static final long waveTime = 30000;
 
 
