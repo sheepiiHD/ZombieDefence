@@ -66,7 +66,6 @@ public class Player {
 
     public Handler updatePlayer = new Handler() {
         public void handleMessage(Message msg) {
-            Log.d("My app", "x = " + x);
             pImage.setX(x);
             pImage.setY(y);
 
@@ -158,6 +157,7 @@ public class Player {
             case 7:
                 pImage.setImageBitmap(rotatePlayer(playerimage, 135));
                 break;
+
 
         }
     }

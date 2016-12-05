@@ -10,6 +10,7 @@ import net.battleplugins.msutton.DungeonsAhoy.Tools.PlayerInfo.Player;
 import net.battleplugins.msutton.game_project.R;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -19,7 +20,7 @@ import java.util.List;
 
 public class ZombieCollection implements Iterator<Zombie> {
 
-    private final List<Zombie> zombieList = new ArrayList<>();
+    private final List<Zombie> zombieList = new ArrayList<Zombie>();
     @Override
     public Zombie next() {
         return zombieList.iterator().next();

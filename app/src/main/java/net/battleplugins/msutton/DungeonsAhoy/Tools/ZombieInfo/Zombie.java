@@ -23,7 +23,6 @@ public class Zombie{
     int[] zLoc;
 
 
-
     public Zombie(ImageView zImage, Player player){
         zLoc = new int[2];
         zImage.getLocationOnScreen(zLoc);
@@ -63,6 +62,7 @@ public class Zombie{
         public void handleMessage(android.os.Message msg) {
 
             /** Because the zombie should always be on top! **/
+            zImage.getLocationOnScreen(zLoc);
             zImage.bringToFront();
             zImage.setX(X);
             zImage.setY(Y);
@@ -73,6 +73,8 @@ public class Zombie{
     private void moveTowardsPlayer(){
         int player_x = player.getPosition()[0];
         int player_y = player.getPosition()[1];
+
+        l("Where is it in zombie class : player - " + player_x + " " + player_y + "zombie  - " + X + " " + Y);
 
         float compareX = player_x - (int)X;
         float compareY = player_y - (int)Y;

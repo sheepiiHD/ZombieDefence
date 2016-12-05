@@ -24,6 +24,7 @@ import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.GameStatu
 import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.GlobalVariables;
 import net.battleplugins.msutton.DungeonsAhoy.Tools.JoyStickClass;
 import net.battleplugins.msutton.DungeonsAhoy.Tools.PlayerInfo.Player;
+import net.battleplugins.msutton.DungeonsAhoy.Tools.ZombieInfo.Zombie;
 import net.battleplugins.msutton.DungeonsAhoy.Tools.ZombieInfo.ZombieCollection;
 import net.battleplugins.msutton.game_project.R;
 
@@ -33,11 +34,9 @@ public class MainActivity extends AppCompatActivity {
     JoyStickClass js_move, js_shoot;
     RelativeLayout layout_joystick_move, layout_joystick_shoot;
 
-
+    Context c;
     ImageView image_player;
     TextView textView1, textView2, textView3, textView4, textView5, textView6;
-
-
 
     ZombieCollection zombieCollection = new ZombieCollection();
 
@@ -45,16 +44,11 @@ public class MainActivity extends AppCompatActivity {
 
     GameStatus gs;
 
-    int[] locations = new int[2];
+    int[] pLoc = new int[2];
+    int[] zLoc = new int[2];
 
     int wave = 0;
     int level = 1;
-
-    Context c;
-
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +122,13 @@ public class MainActivity extends AppCompatActivity {
         public void run(){
             try {
                 while(true) {
-                    image_player.getLocationInWindow(locations);
+                    image_player.getLocationInWindow(pLoc);
+                    Zombie zoms = zombieCollection.next();
+                    if(zoms != null){
+                        zoms.getZombieImage().getLocationInWindow(zLoc);
+                    }
+                    System.out.println("Zombie: x = " + zLoc[0] + "; y = " + zLoc[1]);
+                    System.out.println("Player: x = " + pLoc[0] + "; y = " + pLoc[1]);
                     Thread.sleep(500);
                 }
             } catch (InterruptedException e) {
