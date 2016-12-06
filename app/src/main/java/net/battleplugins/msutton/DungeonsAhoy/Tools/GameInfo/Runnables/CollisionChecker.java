@@ -31,12 +31,12 @@ public class CollisionChecker{
             while(GlobalVariables.running) {
                 try {
                     while (zc.hasNext()) {
-                        //Zombie
+                        /** Zombie **/
                         Zombie z = zc.next();
                         Rect zRec = new Rect();
                         z.getZombieImage().getDrawingRect(zRec);
 
-                        //Player
+                        /** Player **/
                         Rect pRec = new Rect();
                         p.getPlayerImage().getDrawingRect(pRec);
 

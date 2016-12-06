@@ -18,6 +18,7 @@ public class Zombie{
     Direction fdirc;
     ImageView zImage;
     Player player;
+    float zombie_speed = 1;
 
     boolean dead;
     int[] zLoc;
@@ -64,48 +65,47 @@ public class Zombie{
             /** Because the zombie should always be on top! **/
             zImage.getLocationOnScreen(zLoc);
             zImage.bringToFront();
-            zImage.setX(X-800);
-            zImage.setY(Y-168);
+            zImage.setX(zLoc[0]);
+            zImage.setY(zLoc[1]);
 
         }
     };
 
-    private void moveTowardsPlayer(){
-        int player_x = player.getPosition()[0];
-        int player_y = player.getPosition()[1];
+    private double [] moveTowardsPlayer(double [] player_pos, double [] zombie_pos) {
+        double [] player_pos_old = player_pos.clone();
+        double [] zombie_pos_old = zombie_pos.clone();
 
-        //l("Where is it in zombie class : player - " + player_x + " " + player_y + "zombie  - " + X + " " + Y);
-
-        float compareX = player_x - (int)X;
-        float compareY = player_y - (int)Y;
-
-
-
-        // Y is closer, so we're moving horizontally.
-        if(Math.abs(compareX) < Math.abs(compareY)){
-            //Moving North
-            if(player_y > Y+168){
-                Y+=1;
-            }
-            //Moving South
-            else if(player_y < Y+168){
-                Y-=1;
-            }
+        double zombie_pos_new_x = player_pos_old[0] - zombie_pos_old[0];
+        if (zombie_pos_new_x > 0) {
+            zombie_pos_new_x = zombie_pos_new_x - zombie_speed;
+        } else {
+            zombie_pos_new_x = zombie_pos_new_x + zombie_speed;
         }
-        // X is closer, so we're moving vertically.
-        else{
-            //Moving East
-            if(player_x > X+420){
-                X+=1;
-            }
-            //Moving West
-            else if(player_x < X+420){
-                X-=1;
-            }
 
+        double zombie_pos_new_y = player_pos_old[1] - zombie_pos_old[1];
+        if(zombie_pos_new_y > 0){
+            zombie_pos_new_y = zombie_pos_new_y - zombie_speed;
+        } else {
+            zombie_pos_new_y = zombie_pos_new_y + zombie_speed;
         }
+
+        // TODO: do the same for the Y pos.
+
+        // Bring it together
+        double [] zombie_pos_new = {zombie_pos_new_x, zombie_pos_new_y};
+
+        // One step closer to the Brainz!
+        return zombie_pos_new;
     }
     public void l(Object string){
         System.out.println("Log - " + string);
+    }
+
+    private double[] copyFromIntArray(int[] source) {
+        double[] dest = new double[source.length];
+        for(int i=0; i<source.length; i++) {
+            dest[i] = source[i];
+        }
+        return dest;
     }
 }
