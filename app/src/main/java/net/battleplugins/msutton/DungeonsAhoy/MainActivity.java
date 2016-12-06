@@ -8,11 +8,9 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Runnables.CollisionChecker;
 import net.battleplugins.msutton.DungeonsAhoy.Tools.JoyStick.JoyStickHandler;
@@ -41,8 +39,9 @@ public class MainActivity extends AppCompatActivity {
 
         /** Pre setup **/
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getSupportActionBar().hide();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        
+
         /** Setup content **/
         setContentView(R.layout.activity_main);
 
@@ -52,7 +51,9 @@ public class MainActivity extends AppCompatActivity {
         player = new Player(image_player, (int)image_player.getX(), (int)image_player.getY(), p);
 
         /** Visuals **/
-        setUpVisuals();
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        findViewById(R.id.linearLayout).setBackgroundColor(Color.GRAY);
+        GlobalVariables.gameStatus = GameStatus.RUNNING;
 
         /** Joysticks **/
         JoyStickHandler joyStickHandler = new JoyStickHandler(this, player);
@@ -64,12 +65,5 @@ public class MainActivity extends AppCompatActivity {
         /** Collision **/
         cc = new CollisionChecker(zombieCollection, player);
         cc.initiate();
-    }
-    /** VISUALS **/
-    private void setUpVisuals(){
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        findViewById(R.id.linearLayout).setBackgroundColor(Color.GRAY);
-
-        GlobalVariables.gameStatus = GameStatus.RUNNING;
     }
 }
