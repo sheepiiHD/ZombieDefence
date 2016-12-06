@@ -42,8 +42,7 @@ public class MainActivity extends AppCompatActivity {
         /** Pre setup **/
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-
+        
         /** Setup content **/
         setContentView(R.layout.activity_main);
 
@@ -51,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
         image_player = (ImageView)findViewById(R.id.player);
         Bitmap p = ((BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.player, null)).getBitmap();
         player = new Player(image_player, (int)image_player.getX(), (int)image_player.getY(), p);
-
 
         /** Visuals **/
         setUpVisuals();
