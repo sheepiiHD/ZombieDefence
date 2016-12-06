@@ -174,6 +174,7 @@ public class Player {
     public void setFacingDirection(Direction fdirc){
         this.fdirc = fdirc;
     }
+    public ImageView getPlayerImage(){return this.pImage;}
 
     public int[] getPosition(){
         int[] pCords = new int[2];

@@ -64,8 +64,8 @@ public class Zombie{
             /** Because the zombie should always be on top! **/
             zImage.getLocationOnScreen(zLoc);
             zImage.bringToFront();
-            zImage.setX(X);
-            zImage.setY(Y);
+            zImage.setX(X-800);
+            zImage.setY(Y-168);
 
         }
     };
@@ -74,7 +74,7 @@ public class Zombie{
         int player_x = player.getPosition()[0];
         int player_y = player.getPosition()[1];
 
-        l("Where is it in zombie class : player - " + player_x + " " + player_y + "zombie  - " + X + " " + Y);
+        //l("Where is it in zombie class : player - " + player_x + " " + player_y + "zombie  - " + X + " " + Y);
 
         float compareX = player_x - (int)X;
         float compareY = player_y - (int)Y;
@@ -84,22 +84,22 @@ public class Zombie{
         // Y is closer, so we're moving horizontally.
         if(Math.abs(compareX) < Math.abs(compareY)){
             //Moving North
-            if(player_y > Y){
+            if(player_y > Y+168){
                 Y+=1;
             }
             //Moving South
-            else if(player_y < Y){
+            else if(player_y < Y+168){
                 Y-=1;
             }
         }
         // X is closer, so we're moving vertically.
         else{
             //Moving East
-            if(player_x > X){
+            if(player_x > X+420){
                 X+=1;
             }
             //Moving West
-            else if(player_x < X){
+            else if(player_x < X+420){
                 X-=1;
             }
 

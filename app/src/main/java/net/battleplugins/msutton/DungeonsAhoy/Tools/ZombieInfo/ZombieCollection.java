@@ -43,9 +43,8 @@ public class ZombieCollection implements Iterator<Zombie> {
 
 
                     iv.setX(ll.getWidth() / 2);
-
-                    System.out.println("ll.getWidth = " + ll.getWidth());
                     iv.setY(ll.getHeight() / 2);
+
                     iv.setImageResource(R.drawable.zombie);
 
                     ll.addView(iv);
@@ -53,7 +52,7 @@ public class ZombieCollection implements Iterator<Zombie> {
                     System.out.println("This shit is definitely null.");
                 }
             } else {
-                System.out.println("Yo that's not a  ");
+                System.out.println("Yo that's not a thing");
             }
 
             zombieList.add(new Zombie(iv, player));

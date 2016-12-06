@@ -16,6 +16,7 @@ public class GlobalVariables {
 
     /** Game Settings **/
     public static final long waveTime = 30000;
+    public static GameStatus gameStatus;
 
 
 

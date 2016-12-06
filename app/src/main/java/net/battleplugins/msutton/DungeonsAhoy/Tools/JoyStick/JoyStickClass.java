@@ -1,4 +1,4 @@
-package net.battleplugins.msutton.DungeonsAhoy.Tools;
+package net.battleplugins.msutton.DungeonsAhoy.Tools.JoyStick;
 /**
  * This class is sourced from: https://www.youtube.com/watch?v=Em4Qa09-y90
  */

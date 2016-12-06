@@ -1,4 +1,4 @@
-package net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo;
+package net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Runnables;
 
 import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.GlobalVariables;
 
