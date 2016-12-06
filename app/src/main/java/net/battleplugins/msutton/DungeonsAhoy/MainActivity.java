@@ -19,7 +19,6 @@ import net.battleplugins.msutton.DungeonsAhoy.Tools.JoyStick.JoyStickHandler;
 import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.GameStatus;
 import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.GlobalVariables;
 import net.battleplugins.msutton.DungeonsAhoy.Tools.PlayerInfo.Player;
-import net.battleplugins.msutton.DungeonsAhoy.Tools.ZombieInfo.Zombie;
 import net.battleplugins.msutton.DungeonsAhoy.Tools.ZombieInfo.ZombieCollection;
 import net.battleplugins.msutton.game_project.R;
 
@@ -27,17 +26,12 @@ public class MainActivity extends AppCompatActivity {
 
     Context c;
     ImageView image_player;
-    TextView textView1, textView2, textView3, textView4, textView5, textView6;
 
     ZombieCollection zombieCollection = new ZombieCollection();
-
     Player player;
 
     GameStatus gs;
     CollisionChecker cc;
-
-    int[] pLoc = new int[2];
-    int[] zLoc = new int[2];
 
     int level = 1;
 
@@ -60,110 +54,24 @@ public class MainActivity extends AppCompatActivity {
 
 
         /** Visuals **/
-        populateTextViews();
         setUpVisuals();
-        checkDevMode();
 
         /** Joysticks **/
         JoyStickHandler joyStickHandler = new JoyStickHandler(this, player);
         joyStickHandler.setup();
 
-        /** Threading **/
-        c = this;
-
-        zombieCollection.spawn(c, findViewById(R.id.linearLayout), level, player);
-
-        Thread catchPos = new Thread(updateLocations);
-        catchPos.start();
-
-        //Thread spawn = new Thread(spawnZombies);
-        //spawn.start();
+        /** Zombies **/
+        zombieCollection.spawn(this, findViewById(R.id.linearLayout), level, player);
 
         /** Collision **/
         cc = new CollisionChecker(zombieCollection, player);
         cc.initiate();
     }
-
-    /**
-     *  ░███░░█░░░░█░█░░░█░█░░░█░░░███░░░███░░█░░░████░░███░
-     *  ░█░░█░█░░░░█░██░░█░██░░█░░█░░░█░░█░░█░█░░░█░░░░█░░░░
-     *  ░███░░█░░░░█░█░█░█░█░█░█░░█████░░███░░█░░░████░░██░░
-     *  ░█░█░░█░░░░█░█░░██░█░░██░░█░░░█░░█░░█░█░░░█░░░░░░░█░
-     *  ░█░░█░░████░░█░░░█░█░░░█░░█░░░█░░████░███░████░███░░
-     */
-
-    private Runnable spawnZombies = new Runnable() {
-        @Override
-        public void run() {
-            try {
-                while(gs.equals(GameStatus.RUNNING)) {
-                    zombieCollection.spawn(c, findViewById(R.id.linearLayout), level, player);
-                    Thread.sleep(GlobalVariables.waveTime);
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    };
-
-
-
-    private Runnable updateLocations = new Runnable(){
-        @Override
-        public void run(){
-            try {
-                while(true) {
-                    image_player.getLocationInWindow(pLoc);
-                    Zombie zoms = zombieCollection.next();
-                    if(zoms != null){
-                        zoms.getZombieImage().getLocationInWindow(zLoc);
-                    }
-                    //System.out.println("Zombie: x = " + zLoc[0] + "; y = " + zLoc[1]);
-                    //System.out.println("Player: x = " + pLoc[0] + "; y = " + pLoc[1]);
-                    Thread.sleep(500);
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    };
-
-
-
-    private void populateTextViews(){
-        textView1 = (TextView)findViewById(R.id.textView1);
-        textView2 = (TextView)findViewById(R.id.textView2);
-        textView3 = (TextView)findViewById(R.id.textView3);
-        textView4 = (TextView)findViewById(R.id.textView4);
-        textView5 = (TextView)findViewById(R.id.textView5);
-        textView6 = (TextView)findViewById(R.id.textView6);
-    }
-
-    /**
-     *  VISUALS
-     */
+    /** VISUALS **/
     private void setUpVisuals(){
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         findViewById(R.id.linearLayout).setBackgroundColor(Color.GRAY);
 
         GlobalVariables.gameStatus = GameStatus.RUNNING;
     }
-    private void checkDevMode(){
-        if(GlobalVariables.dev_mode) {
-            textView1.setVisibility(View.VISIBLE);
-            textView2.setVisibility(View.VISIBLE);
-            textView3.setVisibility(View.VISIBLE);
-            textView4.setVisibility(View.VISIBLE);
-            textView5.setVisibility(View.VISIBLE);
-            textView6.setVisibility(View.VISIBLE);
-        }else{
-            textView1.setVisibility(View.GONE);
-            textView2.setVisibility(View.GONE);
-            textView3.setVisibility(View.GONE);
-            textView4.setVisibility(View.GONE);
-            textView5.setVisibility(View.GONE);
-            textView6.setVisibility(View.GONE);
-        }
-    }
-
 }
