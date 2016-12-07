@@ -24,13 +24,13 @@ public class Zombie{
     int[] zLoc;
 
 
-    public Zombie(ImageView zImage, Player player){
+    public Zombie(ImageView zImage, float X, float Y, Player player){
         zLoc = new int[2];
         zImage.getLocationOnScreen(zLoc);
 
         this.zImage = zImage;
-        this.X = zLoc[0];
-        this.Y = zLoc[1];
+        this.X = X;
+        this.Y = Y;
         this.Width = zImage.getWidth();
         this.Height = zImage.getHeight();
         this.fdirc = Direction.EAST;

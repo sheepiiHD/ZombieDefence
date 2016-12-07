@@ -49,7 +49,7 @@ public class ZombieCollection implements Iterator<Zombie> {
                 System.out.println("Yo that's not a thing");
             }
 
-            zombieList.add(new Zombie(iv, player));
+            zombieList.add(new Zombie(iv, iv.getX(), iv.getY(), player));
 
         }
     }

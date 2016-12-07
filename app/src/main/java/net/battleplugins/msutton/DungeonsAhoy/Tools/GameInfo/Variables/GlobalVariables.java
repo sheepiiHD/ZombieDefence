@@ -18,6 +18,10 @@ public class GlobalVariables {
     public static final long waveTime = 30000;
     public static GameStatus gameStatus;
 
+    /** Bullet **/
+    public static final long shootSpeed = 10;
+    public static final long shootDelay = 500;
+
 
 
 }
