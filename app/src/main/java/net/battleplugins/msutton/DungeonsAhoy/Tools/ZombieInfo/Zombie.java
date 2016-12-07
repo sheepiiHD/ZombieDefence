@@ -49,7 +49,7 @@ public class Zombie{
         public void run() {
             try {
                 while(!dead) {
-                    moveTowardsPlayer();
+                    //moveTowardsPlayer();
 
                     Thread.sleep(10);
                     updateZombie.sendEmptyMessage(0);
