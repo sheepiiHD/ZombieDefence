@@ -6,49 +6,67 @@
     android:screenOrientation="landscape"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorLandingMain"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="net.battleplugins.msutton.DungeonsAhoy.MainActivity">
+    tools:context="net.battleplugins.msutton.DungeonsAhoy.MainActivity"><![CDATA[
     >
-    <LinearLayout
+
+
+    ]]>
+
+    <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:orientation="vertical"
-        android:id="@+id/linearLayout">
+        android:id="@+id/start_layout"
+        android:stretchColumns="1">
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical" >
 
-        <ImageView
-            android:layout_width="40dp"
-            app:srcCompat="@drawable/player"
-            android:id="@+id/player"
-            android:layout_height="40dp" />
-    </LinearLayout>
+            <ImageView
+                app:srcCompat="@drawable/logo"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginTop="34dp"
+                android:id="@+id/imageView3" />
 
-    <RelativeLayout
-        android:id="@+id/layout_joystick_movement"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="10dp"
-        android:background="@drawable/image_button_bg" >
-    </RelativeLayout>
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical" >
+            <ImageView
+                app:srcCompat="@drawable/quit_button"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginTop="34dp"
+                android:id="@+id/imageView2" />
 
-    <RelativeLayout
-        android:id="@+id/layout_joystick_shooting"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="10dp"
-        android:background="@drawable/image_button_bg" >
-    </RelativeLayout>
+            <ImageView
+                app:srcCompat="@drawable/start_button"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginTop="34dp"
+                android:id="@+id/imageView1"
+                android:clickable="true"
+                android:onClick="startGame" />
 
+        </TableRow>
+
+    </TableLayout>
 
 
 </RelativeLayout>

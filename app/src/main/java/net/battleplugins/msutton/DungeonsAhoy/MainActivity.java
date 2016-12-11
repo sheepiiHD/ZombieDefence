@@ -1,37 +1,17 @@
 package net.battleplugins.msutton.DungeonsAhoy;
 
-import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
 
-import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Runnables.CollisionChecker;
-import net.battleplugins.msutton.DungeonsAhoy.Tools.JoyStick.JoyStickHandler;
-import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.GameStatus;
-import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.GlobalVariables;
-import net.battleplugins.msutton.DungeonsAhoy.Tools.PlayerInfo.Player;
-import net.battleplugins.msutton.DungeonsAhoy.Tools.ZombieInfo.ZombieCollection;
 import net.battleplugins.msutton.game_project.R;
 
 public class MainActivity extends AppCompatActivity {
-
-    Context c;
-    ImageView image_player;
-
-    ZombieCollection zombieCollection = new ZombieCollection();
-    Player player;
-
-    GameStatus gs;
-    CollisionChecker cc;
-
-    int level = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,25 +25,18 @@ public class MainActivity extends AppCompatActivity {
         /** Setup content **/
         setContentView(R.layout.activity_main);
 
-        /** Instantiate player **/
-        image_player = (ImageView)findViewById(R.id.player);
-        Bitmap p = ((BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.player, null)).getBitmap();
-        player = new Player(image_player, (int)image_player.getX(), (int)image_player.getY(), p);
-
         /** Visuals **/
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        findViewById(R.id.linearLayout).setBackgroundColor(Color.GRAY);
-        GlobalVariables.gameStatus = GameStatus.RUNNING;
+        findViewById(R.id.start_layout).setBackgroundColor(Color.BLACK);
+    }
 
-        /** Joysticks **/
-        JoyStickHandler joyStickHandler = new JoyStickHandler(this, player);
-        joyStickHandler.setup();
+    public void startGame(View view){
 
-        /** Zombies **/
-        zombieCollection.spawn(this, findViewById(R.id.linearLayout), level, player);
+        Intent game = new Intent(this, GameActivity.class);
+        this.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        startActivity(game);
+    }
+    public void quitGame(View view){
 
-        /** Collision **/
-        cc = new CollisionChecker(zombieCollection, player);
-        cc.initiate();
     }
 }
