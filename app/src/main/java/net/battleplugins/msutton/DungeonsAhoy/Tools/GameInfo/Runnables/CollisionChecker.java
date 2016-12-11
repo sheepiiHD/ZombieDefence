@@ -60,6 +60,65 @@ public class CollisionChecker{
             }
         }
     };
+    /**
+    public int checkObjectCollision(Direction dirc, int[] playerLoc, int[] WH_Player, ArrayList<CollidableObject> collidables){
+        int player_y = playerLoc[1];
+        int player_x = playerLoc[0];
+
+        for(CollidableObject co : collidables){
+            switch(dirc.getDirectionAsString()){
+                case "North":
+                    if(co instanceof Wall){
+
+                    }else if(co instanceof RoomExit){
+
+                    }
+                case "East":
+                    if(player_x + 1 + WH_Player[0] > WH_Screen[0]) {
+                        return true;
+                    }else{
+                        return false;
+                    }
+                case "South":
+                    if(player_y + 1 + WH_Player[1] > WH_Screen[1]) {
+                        return true;
+                    }else{
+                        return false;
+                    }
+                case "West":
+                    if(player_x - 1 < 0){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                case "North East":
+                    if(player_y - 1 < 0 || player_x + 1 + WH_Player[0] > WH_Screen[0]){
+                        return true;
+                    }else {
+                        return false;
+                    }
+                case "North West":
+                    if(player_y - 1 < 0 || player_x - 1 < 0){
+                        return true;
+                    }else {
+                        return false;
+                    }
+                case "South East":
+                    if(player_y + 1 + WH_Player[1] > WH_Screen[1] || player_x + 1 + WH_Player[0] > WH_Screen[0]){
+                        return true;
+                    }else {
+                        return false;
+                    }
+                case "South West":
+                    if(player_y + 1 + WH_Player[1] > WH_Screen[1] || player_x - 1 < 0){
+                        return true;
+                    }else {
+                        return false;
+                    }
+            }
+        }
+    }
+    **/
     public boolean checkWallCollision(Direction dirc, int[] locOnScreen, int[] WH_Player, int[] WH_Screen){
 
         int player_x = locOnScreen[0];
