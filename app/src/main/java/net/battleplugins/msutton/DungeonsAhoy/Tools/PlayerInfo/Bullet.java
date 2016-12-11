@@ -17,6 +17,12 @@ public class Bullet {
         this.x = x;
         this.y = y;
     }
+    public float getX(){
+        return x;
+    }
+    public float getY(){
+        return y;
+    }
 
     public void fire(){
         switch(d.getDirectionActual()){

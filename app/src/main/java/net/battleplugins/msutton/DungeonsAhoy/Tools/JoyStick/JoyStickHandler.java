@@ -172,6 +172,7 @@ public class JoyStickHandler {
                         case JoyStickClass.STICK_UP:
                             if(player.getDirection() != Direction.NORTH) {
                                 player.setFacingDirection(Direction.NORTH);
+
                             }
                             GlobalVariables.shooting = true;
                             break;

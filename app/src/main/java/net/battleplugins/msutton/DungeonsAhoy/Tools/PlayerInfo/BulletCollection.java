@@ -48,6 +48,12 @@ public class BulletCollection implements Iterator<Bullet> {
         this.player = player;
         this.c = c;
         this.layout = layout;
+
+        Thread spawn = new Thread(spawnNewBullet);
+        spawn.start();
+
+        Thread makefly = new Thread(bulletsFly);
+        makefly.start();
     }
 
     /**
@@ -77,8 +83,10 @@ public class BulletCollection implements Iterator<Bullet> {
                     while (hasNext()) {
                         Bullet b = next();
                         b.fire();
+                        Thread.sleep(GlobalVariables.shootSpeed);
                     }
-                    Thread.sleep(GlobalVariables.shootSpeed);
+                    updateBullets.sendEmptyMessage(0);
+
                 } catch (InterruptedException e) {
                     Log.d("BulletCollection", "Error in bulletsFly function.");
                 }
@@ -89,22 +97,25 @@ public class BulletCollection implements Iterator<Bullet> {
 
     public Handler updateBullets = new Handler() {
         public void handleMessage(Message msg) {
+            while(hasNext()){
+                Bullet b = next();
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                ImageView iv = new ImageView(c);
+                iv.setImageResource(R.drawable.bullet2);
+                params.setMargins((int)b.getX(),(int)b.getY(), 0,0);
 
-            //TODO: Add loop to go through all of the bullets (to grab their x and y) and set the location to the ImageView
-            ImageView iv = new ImageView(c);
-            iv.setImageResource(R.drawable.bullet2);
+                if (layout instanceof LinearLayout) {
+                    try {
+                        Activity ac = (Activity) c;
+                        LinearLayout ll = (LinearLayout) ac.findViewById(R.id.linearLayout);
 
-            if (layout instanceof LinearLayout) {
-                try {
-                    Activity ac = (Activity) c;
-                    LinearLayout ll = (LinearLayout) ac.findViewById(R.id.linearLayout);
-
-                    ll.addView(iv);
-                } catch (NullPointerException e) {
-                    System.out.println("This shit is definitely null.");
+                        ll.addView(iv);
+                    } catch (NullPointerException e) {
+                        System.out.println("This shit is definitely null.");
+                    }
                 }
-            }
 
+            }
         }
     };
 }

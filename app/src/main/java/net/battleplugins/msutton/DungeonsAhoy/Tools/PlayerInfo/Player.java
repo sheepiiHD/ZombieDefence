@@ -1,5 +1,7 @@
 package net.battleplugins.msutton.DungeonsAhoy.Tools.PlayerInfo;
 
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.os.Handler;
@@ -25,6 +27,10 @@ public class Player {
     protected ImageView pImage;
     protected float velocity;
     protected CollisionChecker cc;
+    protected BulletCollection bc;
+    protected Context c;
+    protected Activity ac;
+
 
     public Player(ImageView pImage, float x, float y, Bitmap p) {
         this.dirc = Direction.EAST;
@@ -34,6 +40,10 @@ public class Player {
         this.playerimage = p;
         this.pImage = pImage;
         this.cc = new CollisionChecker(this);
+        this.bc = new BulletCollection();
+        //this.c = pImage.getContext();
+        //this.ac = (Activity)c;
+        //bc.initiate(this, c, ac.findViewById(R.id.linearLayout));
 
         velocity = 1;
 
@@ -120,7 +130,6 @@ public class Player {
      **/
     public void sPlayer() {
         if(GlobalVariables.shooting){
-
         }
     }
 
