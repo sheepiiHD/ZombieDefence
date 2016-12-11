@@ -78,7 +78,7 @@ public class GameActivity extends AppCompatActivity {
         GlobalVariables.gameStatus = GameStatus.RUNNING;
 
         /** Joysticks **/
-        JoyStickHandler joyStickHandler = new JoyStickHandler(this, player);
+        JoyStickHandler joyStickHandler = new JoyStickHandler(this, player, zombieCollection);
         joyStickHandler.setup();
 
         /** Zombies **/

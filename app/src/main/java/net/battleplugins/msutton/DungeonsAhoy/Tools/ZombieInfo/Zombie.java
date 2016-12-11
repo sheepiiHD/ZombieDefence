@@ -23,6 +23,8 @@ public class Zombie{
     boolean dead;
     int[] zLoc;
 
+    double[] tLocation;
+
 
     public Zombie(ImageView zImage, float X, float Y, Player player){
         zLoc = new int[2];
@@ -49,7 +51,9 @@ public class Zombie{
         public void run() {
             try {
                 while(!dead) {
-                    //moveTowardsPlayer();
+                    double[] d1 = {player.getPosition()[0]-850, player.getPosition()[1]-300};
+                    double[] d2 = {X, Y};
+                    tLocation = moveTowardsPlayer(d1, d2);
 
                     Thread.sleep(10);
                     updateZombie.sendEmptyMessage(0);
@@ -65,8 +69,8 @@ public class Zombie{
             /** Because the zombie should always be on top! **/
             zImage.getLocationOnScreen(zLoc);
             zImage.bringToFront();
-            zImage.setX(zLoc[0]);
-            zImage.setY(zLoc[1]);
+            zImage.setX((float)tLocation[0]);
+            zImage.setY((float)tLocation[1]);
 
         }
     };
@@ -89,23 +93,10 @@ public class Zombie{
             zombie_pos_new_y = zombie_pos_new_y + zombie_speed;
         }
 
-        // TODO: do the same for the Y pos.
-
         // Bring it together
         double [] zombie_pos_new = {zombie_pos_new_x, zombie_pos_new_y};
 
         // One step closer to the Brainz!
         return zombie_pos_new;
-    }
-    public void l(Object string){
-        System.out.println("Log - " + string);
-    }
-
-    private double[] copyFromIntArray(int[] source) {
-        double[] dest = new double[source.length];
-        for(int i=0; i<source.length; i++) {
-            dest[i] = source[i];
-        }
-        return dest;
     }
 }

@@ -1,7 +1,9 @@
 package net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Runnables;
 
 import android.graphics.Rect;
+import android.util.Log;
 
+import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.Direction;
 import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.GameStatus;
 import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.GlobalVariables;
 import net.battleplugins.msutton.DungeonsAhoy.Tools.PlayerInfo.Player;
@@ -21,9 +23,16 @@ public class CollisionChecker{
         this.zc = zc;
         this.p = p;
     }
+    public CollisionChecker(Player p){
+        this.p = p;
+    }
     public void initiate(){
-        Thread zombieCollision = new Thread(checkZombieCollision);
-        zombieCollision.start();
+        if(zc != null) {
+            Thread zombieCollision = new Thread(checkZombieCollision);
+            zombieCollision.start();
+        }else{
+            Log.d("CollisionChecker", "You're trying to initiate zc without initializing a ZombieCollection.");
+        }
     }
     private Runnable checkZombieCollision = new Runnable(){
         @Override
@@ -41,7 +50,7 @@ public class CollisionChecker{
                         p.getPlayerImage().getDrawingRect(pRec);
 
                         if (Rect.intersects(zRec, pRec)) {
-                            handleCollision();
+                            handleZombieCollision();
                         }
                     }
                     Thread.sleep(100);
@@ -51,9 +60,69 @@ public class CollisionChecker{
             }
         }
     };
+    public boolean checkWallCollision(Direction dirc, int[] locOnScreen, int[] WH_Player, int[] WH_Screen){
+
+        int player_x = locOnScreen[0];
+        int player_y = locOnScreen[1];
+
+        switch(dirc.getDirectionAsString()){
+            case "North":
+                if(player_y - 1 < 0) {
+                    return true;
+                }else{
+                    return false;
+                }
+            case "East":
+                if(player_x + 1 + WH_Player[0] > WH_Screen[0]) {
+                    return true;
+                }else{
+                    return false;
+                }
+            case "South":
+                if(player_y + 1 + WH_Player[1] > WH_Screen[1]) {
+                    return true;
+                }else{
+                    return false;
+                }
+            case "West":
+                if(player_x - 1 < 0){
+                    return true;
+                }else{
+                    return false;
+                }
+            case "North East":
+                if(player_y - 1 < 0 || player_x + 1 + WH_Player[0] > WH_Screen[0]){
+                    return true;
+                }else {
+                    return false;
+                }
+            case "North West":
+                if(player_y - 1 < 0 || player_x - 1 < 0){
+                    return true;
+                }else {
+                    return false;
+                }
+            case "South East":
+                if(player_y + 1 + WH_Player[1] > WH_Screen[1] || player_x + 1 + WH_Player[0] > WH_Screen[0]){
+                    return true;
+                }else {
+                    return false;
+                }
+            case "South West":
+                if(player_y + 1 + WH_Player[1] > WH_Screen[1] || player_x - 1 < 0){
+                    return true;
+                }else {
+                    return false;
+                }
+            default:
+                return false;
+        }
 
 
-    private void handleCollision(){
+    }
+
+
+    private void handleZombieCollision(){
         GlobalVariables.gameStatus = GameStatus.GAME_OVER;
     }
 

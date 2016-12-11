@@ -2,13 +2,16 @@ package net.battleplugins.msutton.DungeonsAhoy.Tools.JoyStick;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Runnables.CollisionChecker;
 import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.Direction;
 import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.GlobalVariables;
 import net.battleplugins.msutton.DungeonsAhoy.Tools.PlayerInfo.Player;
+import net.battleplugins.msutton.DungeonsAhoy.Tools.ZombieInfo.ZombieCollection;
 import net.battleplugins.msutton.game_project.R;
 
 /**
@@ -20,13 +23,15 @@ public class JoyStickHandler {
     Context c;
     RelativeLayout layout_joystick_movement, layout_joystick_shooting;
     JoyStickClass js_move, js_shoot;
+    CollisionChecker cc;
 
+    int[] pos;
     Player player;
 
-    public JoyStickHandler(Context c, Player p){
+    public JoyStickHandler(Context c, Player p, ZombieCollection zc){
         this.c = c;
         this.player = p;
-
+        this.cc = new CollisionChecker(zc, p);
 
         /** Instantiate the joysticks. **/
         View v1 = ((Activity)c).findViewById(R.id.layout_joystick_movement);
@@ -67,7 +72,12 @@ public class JoyStickHandler {
                 if(arg1.getAction() == MotionEvent.ACTION_DOWN
                         || arg1.getAction() == MotionEvent.ACTION_MOVE) {
 
-                    GlobalVariables.moving = true;
+
+                    DisplayMetrics displaymetrics = new DisplayMetrics();
+                    ((Activity)c).getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+                    int[] screen = {displaymetrics.widthPixels, displaymetrics.heightPixels};
+                    int[] p_WH = {player.getPlayerImage().getWidth(), player.getPlayerImage().getHeight()};
+
 
                     int direction = js_move.get8Direction();
                     switch(direction){
@@ -139,6 +149,7 @@ public class JoyStickHandler {
                         case JoyStickClass.STICK_NONE:
                             break;
                     }
+                    GlobalVariables.moving = true;
                     player.rPlayer();
 
                 } else if(arg1.getAction() == MotionEvent.ACTION_UP) {

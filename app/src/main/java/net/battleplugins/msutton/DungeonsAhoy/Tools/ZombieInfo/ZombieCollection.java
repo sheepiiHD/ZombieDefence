@@ -34,6 +34,7 @@ public class ZombieCollection implements Iterator<Zombie> {
     public void spawn(Context context, View layout, int amount, Player player){
         for(int i = 0; i < amount; i++) {
             ImageView iv = new ImageView(context);
+
             iv.setImageResource(R.drawable.zombie);
 
             if (layout instanceof LinearLayout) {

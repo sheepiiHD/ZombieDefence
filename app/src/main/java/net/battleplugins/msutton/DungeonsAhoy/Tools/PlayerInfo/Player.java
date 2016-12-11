@@ -4,9 +4,10 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
+import android.util.DisplayMetrics;
 import android.widget.ImageView;
 
+import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Runnables.CollisionChecker;
 import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.Direction;
 import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.GlobalVariables;
 
@@ -23,6 +24,7 @@ public class Player {
     protected Bitmap playerimage;
     protected ImageView pImage;
     protected float velocity;
+    protected CollisionChecker cc;
 
     public Player(ImageView pImage, float x, float y, Bitmap p) {
         this.dirc = Direction.EAST;
@@ -31,6 +33,7 @@ public class Player {
         this.y = y;
         this.playerimage = p;
         this.pImage = pImage;
+        this.cc = new CollisionChecker(this);
 
         velocity = 1;
 
@@ -51,7 +54,11 @@ public class Player {
         public void run() {
             try {
                 while (true) {
-                    if (GlobalVariables.moving) {
+
+                    DisplayMetrics displayMetrics = pImage.getContext().getResources().getDisplayMetrics();
+                    int[] s_wh = {displayMetrics.widthPixels, displayMetrics.heightPixels};
+                    int[] p_wh = {pImage.getWidth(), pImage.getHeight()};
+                    if (GlobalVariables.moving && !cc.checkWallCollision(getDirection(), getPosition(), p_wh, s_wh)) {
                         mPlayer();
                     }
 
@@ -66,9 +73,8 @@ public class Player {
 
     public Handler updatePlayer = new Handler() {
         public void handleMessage(Message msg) {
-            pImage.setX(x);
-            pImage.setY(y);
-
+                pImage.setX(x);
+                pImage.setY(y);
         }
     };
 
