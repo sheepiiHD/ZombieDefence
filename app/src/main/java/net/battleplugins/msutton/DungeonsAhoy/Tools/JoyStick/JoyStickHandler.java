@@ -7,11 +7,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Runnables.CollisionChecker;
 import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.Direction;
 import net.battleplugins.msutton.DungeonsAhoy.Tools.GameInfo.Variables.GlobalVariables;
 import net.battleplugins.msutton.DungeonsAhoy.Tools.PlayerInfo.Player;
-import net.battleplugins.msutton.DungeonsAhoy.Tools.ZombieInfo.ZombieCollection;
 import net.battleplugins.msutton.game_project.R;
 
 /**
@@ -23,15 +21,13 @@ public class JoyStickHandler {
     Context c;
     RelativeLayout layout_joystick_movement, layout_joystick_shooting;
     JoyStickClass js_move, js_shoot;
-    CollisionChecker cc;
 
     int[] pos;
     Player player;
 
-    public JoyStickHandler(Context c, Player p, ZombieCollection zc){
+    public JoyStickHandler(Context c, Player p){
         this.c = c;
         this.player = p;
-        this.cc = new CollisionChecker(zc, p);
 
         /** Instantiate the joysticks. **/
         View v1 = ((Activity)c).findViewById(R.id.layout_joystick_movement);
